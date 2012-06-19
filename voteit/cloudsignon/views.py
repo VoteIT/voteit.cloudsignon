@@ -26,13 +26,7 @@ from voteit.core.models.schemas import button_cancel
 from voteit.cloudsignon import VoteITCSO as _
 
 
-class CloudSignOnView(BaseEdit):
-    
-    @view_config(context=ISiteRoot, name='cloud_sign_on', renderer="login.pt", permission=NO_PERMISSION_REQUIRED)
-    def cloud_sign_on(self):
-        self.response['login_url'] = login_url
-        return self.response
-        
+class CloudSignOnView(BaseEdit):        
     
     @view_config(context=ISiteRoot, name='cso', renderer="voteit.core.views:templates/base_edit.pt", permission=NO_PERMISSION_REQUIRED)
     def cso(self):
@@ -111,8 +105,6 @@ def cloud_login_complete(context, request):
     schema = createSchema('CSORegisterUserSchema').bind(context=context, request=request)
     add_csrf_token(context, request, schema)
     form = Form(schema, action='/cso', buttons=(button_register,))
-    
-    import pdb; pdb.set_trace()
     
     oauth_token = result['credentials']['oauthAccessToken']
     
