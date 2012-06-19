@@ -1,0 +1,22 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en"
+      xmlns:tal="http://xml.zope.org/namespaces/tal"
+      metal:use-macro="load: ${api.template_dir}content.pt"
+	  xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+	  i18n:domain="voteit.cloudsignon">
+<body>
+<h1 metal:fill-slot="page_heading">
+        Login
+</h1>
+<div metal:fill-slot="content" class="content_wrapper">
+    <form action="${login_url(request, 'facebook')}" method="post">
+    	<input type="hidden" name="scope" value="email,offline_access" />
+        <input type="submit" value="Login with Facebook" />
+    </form>
+    <form action="${login_url(request, 'twitter')}" method="post">
+		<input type="submit" value="Login with Twitter" />
+	</form>
+</div> <!-- content -->
+</body>
+</html>
