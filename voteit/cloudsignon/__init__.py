@@ -13,9 +13,6 @@ def includeme(config):
                               for line in providers.splitlines()
                               for p in line.split(', ')])
     config.registry.settings['login_providers'] = providers
-    if not any(providers):
-        log.warn('no login providers configured, double check your ini '
-                 'file and add a few')
         
     if 'facebook' in providers:
         config.include('velruse.providers.facebook')
