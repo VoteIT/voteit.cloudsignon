@@ -22,6 +22,7 @@ from voteit.core.views.base_edit import BaseEdit
 from voteit.core.models.schemas import add_csrf_token
 from voteit.core.models.schemas import button_register
 from voteit.core.models.schemas import button_cancel
+from voteit.core.validators import NEW_USERID_PATTERN
 
 from voteit.cloudsignon import VoteITCSO as _
 
@@ -122,12 +123,23 @@ def cloud_login_complete(context, request):
         email = result['profile']['verifiedEmail']
     else:
         email = ''
+    if 'accounts' in result and len(result['accounts']) > 0:
+        oauth_userid = result['accounts'][0]['userid']
+        domain = result['accounts'][0]['domain']
+    else:
+        oauth_userid = ''
+        domain = ''
+        
+    if not NEW_USERID_PATTERN.match(userid):
+        userid = ''
     
     appstruct = {'userid': userid,
                 'oauth_access_token': oauth_token, 
                 'first_name': first_name,
                 'last_name': last_name,
-                'email': email,}
+                'email': email,
+                'oauth_userid': oauth_userid,
+                'domain': domain}
     
     return {'form': form.render(appstruct=appstruct)}
 

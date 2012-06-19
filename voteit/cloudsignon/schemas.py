@@ -25,9 +25,14 @@ class CSORegisterUserSchema(colander.Schema):
                                  title = _(u"UserID"),
                                  description = _('userid_description',
                                                  default=u" Used as a nickname, in @-links and as a unique id. You can't change this later. OK characters are: a-z, 0-9, '.', '-', '_'."),
-                                 validator=deferred_new_userid_validator,
-                                 preparer=userid_preparer,)
+                                 validator=deferred_new_userid_validator,)
     email = email_node()
     first_name = first_name_node()
     last_name = last_name_node()
     oauth_access_token = oauth_access_token_node();
+    oauth_userid = colander.SchemaNode(colander.String(),
+                                       widget = deform.widget.HiddenWidget(),
+                                       missing=u"",)
+    domain = colander.SchemaNode(colander.String(),
+                                 widget = deform.widget.HiddenWidget(),
+                                 missing=u"",)
