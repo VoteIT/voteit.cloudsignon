@@ -11,12 +11,7 @@ from voteit.core.schemas.user import last_name_node
 from voteit.core.schemas.user import came_from_node
 
 from voteit.cloudsignon import VoteITCSO as _
-from voteit.cloudsignon.validators import deferred_unique_oauth_access_token_validator
 
-def oauth_access_token_node():
-    return colander.SchemaNode(colander.String(),
-                               widget = deform.widget.HiddenWidget(),
-                               validator=deferred_unique_oauth_access_token_validator,)
     
 @schema_factory('CSORegisterUserSchema', title = _(u"Registration"))
 class CSORegisterUserSchema(colander.Schema):
@@ -29,10 +24,11 @@ class CSORegisterUserSchema(colander.Schema):
     email = email_node()
     first_name = first_name_node()
     last_name = last_name_node()
-    oauth_access_token = oauth_access_token_node();
-    oauth_userid = colander.SchemaNode(colander.String(),
-                                       widget = deform.widget.HiddenWidget(),
-                                       missing=u"",)
     domain = colander.SchemaNode(colander.String(),
                                  widget = deform.widget.HiddenWidget(),
                                  missing=u"",)
+    oauth_access_token = colander.SchemaNode(colander.String(),
+                                             widget = deform.widget.HiddenWidget(),)
+    oauth_userid = colander.SchemaNode(colander.String(),
+                                       widget = deform.widget.HiddenWidget(),
+                                       missing=u"",)

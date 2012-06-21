@@ -1,0 +1,17 @@
+<tal:main xmlns:i18n="http://xml.zope.org/namespaces/i18n" i18n:domain="voteit.cloudsignon">
+<p tal:condition="'facebook' in providers and not 'facebook.com' in user.auth_domains">
+<form action="${login_url(request, 'facebook')}" method="post">
+	<input type="hidden" name="scope" value="email,offline_access" />
+    <button name="login" type="submit" class="buttonize" value="login">
+        <span i18n:translate="">Connect to Facebook</span>
+	</button>
+</form>
+</p>
+<p tal:condition="'twitter' in providers and not 'twitter.com' in user.auth_domains">
+<form action="${login_url(request, 'twitter')}" method="post">
+	<button name="login" type="submit" class="buttonize" value="login">
+        <span i18n:translate="">Connect to Twitter</span>
+	</button>
+</form>
+</p>
+</tal:main>

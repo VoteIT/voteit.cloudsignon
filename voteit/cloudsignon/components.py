@@ -12,3 +12,14 @@ def cloudsignon(context, request, va, **kw):
                 'providers': request.registry.settings['login_providers'],}
     
     return render('login.pt', response, request = request)
+
+@view_action('connect_forms', 'cloudsignconnect')
+def cloudsignconnect(context, request, va, **kw):
+    api = kw['api']
+    user = api.user_profile
+    response = {'api': api,
+                'user': user,
+                'login_url': login_url,
+                'providers': request.registry.settings['login_providers'],}
+    
+    return render('connect.pt', response, request = request)

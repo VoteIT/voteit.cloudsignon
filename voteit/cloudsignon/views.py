@@ -45,35 +45,33 @@ class CloudSignOnView(BaseEdit):
 
         if self.request.POST:
             post = dict(self.request.POST)
-            if 'oauth_access_token' in post and post['oauth_access_token']:
-                oauth_access_token = post['oauth_access_token']
+            
+            domain = post['domain']
+            oauth_userid = post['oauth_userid']
+            oauth_access_token = post['oauth_access_token']
+            
+            # Logged in user, connect auth token to user
+            if self.api.userid:
+                user = self.api.user_profile
                 
-                # Logged in user, connect auth token to user
-                if self.api.userid:
-                    current_user = self.api.user_profile
-                    
-                    #check that no other user has this token already
-                    user = get_user_by_oauth_token(self.context, oauth_access_token)
-                    if user and current_user != user:
-                        raise Forbidden(_("Unable to Authenticate using OpenID"))
-                    
-                    current_user.set_field_value('oauth_access_token', oauth_access_token)
-                    url = resource_url(current_user, self.request)
-                    return HTTPFound(location=url)
-                else:
-                    # Find user with auth token and log it in
-                    user = get_user_by_oauth_token(self.context, oauth_access_token)
-                    if user:
-                        if IUser.providedBy(user):
-                            headers = remember(self.request, user.__name__)
-                            url = resource_url(self.context, self.request)
-                            return HTTPFound(location = url,
-                                             headers = headers)
-                    else: # No user with that auth token was found
-                        #check that no other user has this token already
-                        user = get_user_by_oauth_token(self.context, oauth_access_token)
-                        if user and self.user != user:
-                            raise Forbidden(_("Unable to Authenticate using OpenID"))
+                #check that no other user has this token already
+                other_user = get_user_by_oauth_token(self.context, domain, oauth_access_token)
+                if other_user and user != other_user:
+                    raise Forbidden(_("Another user has already registered with this token."))
+                
+                #setting domain stuff
+                user.auth_domains[domain] = {'oauth_userid': oauth_userid, 'oauth_access_token': oauth_access_token}
+                url = resource_url(user, self.request)
+                return HTTPFound(location=url)
+            else:
+                # Find user with auth token and log it in
+                user = get_user_by_oauth_token(self.context, domain, oauth_access_token)
+                if user:
+                    if IUser.providedBy(user):
+                        headers = remember(self.request, user.__name__)
+                        url = resource_url(self.context, self.request)
+                        return HTTPFound(location = url,
+                                         headers = headers)
 
             controls = self.request.POST.items()
             try:
@@ -84,16 +82,26 @@ class CloudSignOnView(BaseEdit):
             
             name = appstruct['userid']
             del appstruct['userid']
+            
+            # removing domain data from appstruct
+            domain = appstruct['domain']
+            del appstruct['domain']
+            oauth_userid = appstruct['oauth_userid']
+            del appstruct['oauth_userid']
+            oauth_access_token = appstruct['oauth_access_token']
+            del appstruct['oauth_access_token']
 
             obj = createContent('User', creators=[name], **appstruct)
             self.context.users[name] = obj
+            #setting domain stuff
+            obj.auth_domains[domain] = {'oauth_userid': oauth_userid, 'oauth_access_token': oauth_access_token}
             
             headers = remember(self.request, name) # login user
             
             url = resource_url(self.api.root, self.request)
             return HTTPFound(location=url, headers=headers)
                 
-        raise Forbidden(_("Unable to Authenticate using OpenID"))
+        raise Forbidden(_("Unable to authenticate using OpenID"))
 
 
 @view_config(context=AuthenticationComplete, renderer="form_redirect.pt", permission=NO_PERMISSION_REQUIRED)
@@ -107,7 +115,9 @@ def cloud_login_complete(context, request):
     add_csrf_token(context, request, schema)
     form = Form(schema, action='/cso', buttons=(button_register,))
     
+    domain = result['profile']['accounts'][0]['domain']
     oauth_token = result['credentials']['oauthAccessToken']
+    oauth_userid = result['profile']['accounts'][0]['userid']
     
     if 'preferredUsername' in result['profile']:
         userid = result['profile']['preferredUsername']
@@ -123,23 +133,17 @@ def cloud_login_complete(context, request):
         email = result['profile']['verifiedEmail']
     else:
         email = ''
-    if 'accounts' in result and len(result['accounts']) > 0:
-        oauth_userid = result['accounts'][0]['userid']
-        domain = result['accounts'][0]['domain']
-    else:
-        oauth_userid = ''
-        domain = ''
         
     if not NEW_USERID_PATTERN.match(userid):
         userid = ''
     
     appstruct = {'userid': userid,
+                'domain': domain,
                 'oauth_access_token': oauth_token, 
+                'oauth_userid': oauth_userid,
                 'first_name': first_name,
                 'last_name': last_name,
-                'email': email,
-                'oauth_userid': oauth_userid,
-                'domain': domain}
+                'email': email,}
     
     return {'form': form.render(appstruct=appstruct)}
 
@@ -147,8 +151,8 @@ def cloud_login_complete(context, request):
 def cloud_login_denied(context, request):
     raise Forbidden(_("Unable to Authenticate using OpenID"))
 
-def get_user_by_oauth_token(context, token):
+def get_user_by_oauth_token(context, domain, token):
     root = find_root(context)
     for user in root.users.get_content(iface=IUser):
-        if user.get_field_value('oauth_access_token') == token:
+        if domain in user.auth_domains and user.auth_domains[domain]['oauth_access_token'] == token:
             return user
