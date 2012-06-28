@@ -5,6 +5,7 @@ VoteITCSO = TranslationStringFactory('voteit.cloudsignon')
 
 def includeme(config):
     config.scan('voteit.cloudsignon')
+    config.include('voteit.cloudsignon.profile_image_plugins')
     config.add_translation_dirs('voteit.cloudsignon:locale/')
     
     # determine which providers we want to configure
