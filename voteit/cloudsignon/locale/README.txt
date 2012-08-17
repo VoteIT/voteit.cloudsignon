@@ -1,0 +1,1 @@
+Run babel for translations. Make sure long translation strings use IDs.
