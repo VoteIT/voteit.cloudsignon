@@ -88,6 +88,9 @@ class CloudSignOnView(BaseEdit):
             # removing domain data from appstruct
             del appstruct['oauth_userid']
             del appstruct['oauth_access_token']
+            
+            # add facebook as selected profile image
+            appstruct['profile_image_plugin'] = 'facebook_profile_image'
 
             obj = createContent('User', creators=[name], **appstruct)
             self.context.users[name] = obj
@@ -161,6 +164,9 @@ class CloudSignOnView(BaseEdit):
             # removing domain data from appstruct
             del appstruct['oauth_userid']
             del appstruct['oauth_access_token']
+            
+            # add twitter as selected profile image
+            appstruct['profile_image_plugin'] = 'twitter_profile_image'
 
             obj = createContent('User', creators=[name], **appstruct)
             self.context.users[name] = obj
