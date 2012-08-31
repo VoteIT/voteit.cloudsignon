@@ -32,3 +32,4 @@ class CSORegisterUserSchema(colander.Schema):
     oauth_userid = colander.SchemaNode(colander.String(),
                                        widget = deform.widget.HiddenWidget(),
                                        missing=u"",)
+    came_from = came_from_node()

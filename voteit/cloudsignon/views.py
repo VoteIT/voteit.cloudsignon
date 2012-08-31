@@ -1,5 +1,6 @@
 import colander
 import json
+import urllib
 
 from betahaus.pyracont.factories import createContent
 from betahaus.pyracont.factories import createSchema
@@ -7,6 +8,7 @@ from deform import Form
 from deform.exception import ValidationFailure
 from pyramid.exceptions import Forbidden
 from pyramid.httpexceptions import HTTPFound
+from pyramid.httpexceptions import HTTPBadRequest
 from pyramid.security import NO_PERMISSION_REQUIRED
 from pyramid.security import remember
 from pyramid.traversal import find_root
@@ -17,6 +19,8 @@ from velruse.providers import facebook
 from velruse import AuthenticationComplete
 from velruse import AuthenticationDenied
 from velruse import login_url
+from httplib2 import Http
+from urllib import urlencode
 
 from voteit.core.models.interfaces import ISiteRoot
 from voteit.core.models.interfaces import IUser
@@ -51,6 +55,8 @@ class CloudSignOnView(BaseEdit):
             oauth_userid = post['oauth_userid']
             oauth_access_token = post['oauth_access_token']
             
+            came_from = post['came_from']
+            
             # Logged in user, connect auth token to user
             if self.api.userid:
                 user = self.api.user_profile
@@ -72,6 +78,8 @@ class CloudSignOnView(BaseEdit):
                     if IUser.providedBy(user):
                         headers = remember(self.request, user.__name__)
                         url = resource_url(self.context, self.request)
+                        if came_from:
+                            url = urllib.unquote(came_from)
                         return HTTPFound(location = url,
                                          headers = headers)
 
@@ -91,6 +99,8 @@ class CloudSignOnView(BaseEdit):
             
             # add facebook as selected profile image
             appstruct['profile_image_plugin'] = 'facebook_profile_image'
+            
+            del appstruct['came_from']
 
             obj = createContent('User', creators=[name], **appstruct)
             self.context.users[name] = obj
@@ -101,6 +111,8 @@ class CloudSignOnView(BaseEdit):
             headers = remember(self.request, name) # login user
             
             url = resource_url(self.api.root, self.request)
+            if came_from:
+                url = urllib.unquote(came_from)
             return HTTPFound(location=url, headers=headers)
                 
         raise Forbidden(_("Unable to authenticate using Facebook"))
@@ -126,6 +138,8 @@ class CloudSignOnView(BaseEdit):
             oauth_access_token = post['oauth_access_token']
             display_name = post['userid']
             
+            came_from = post['came_from']
+            
             # Logged in user, connect auth token to user
             if self.api.userid:
                 user = self.api.user_profile
@@ -148,6 +162,8 @@ class CloudSignOnView(BaseEdit):
                     if IUser.providedBy(user):
                         headers = remember(self.request, user.__name__)
                         url = resource_url(self.context, self.request)
+                        if came_from:
+                            url = urllib.unquote(came_from)
                         return HTTPFound(location = url,
                                          headers = headers)
 
@@ -167,6 +183,8 @@ class CloudSignOnView(BaseEdit):
             
             # add twitter as selected profile image
             appstruct['profile_image_plugin'] = 'twitter_profile_image'
+            
+            del appstruct['came_from']
 
             obj = createContent('User', creators=[name], **appstruct)
             self.context.users[name] = obj
@@ -178,9 +196,29 @@ class CloudSignOnView(BaseEdit):
             headers = remember(self.request, name) # login user
             
             url = resource_url(self.api.root, self.request)
+            if came_from:
+                url = urllib.unquote(came_from)
             return HTTPFound(location=url, headers=headers)
                 
         raise Forbidden(_("Unable to authenticate using Twitter"))
+
+@view_config(context=ISiteRoot, name='facebook_login', permission=NO_PERMISSION_REQUIRED)
+def facebook_login(self, request):
+    if request.POST:
+        request.session['came_from'] = request.POST.get('came_from', None) 
+        provider = request.registry.velruse_providers['facebook']
+        return provider.login(request)
+    
+    return HTTPBadRequest()
+    
+@view_config(context=ISiteRoot, name='twitter_login', permission=NO_PERMISSION_REQUIRED)
+def twitter_login(self, request):
+    if request.POST:
+        request.session['came_from'] = request.POST.get('came_from', None)
+        provider = request.registry.velruse_providers['twitter']
+        return provider.login(request)
+    
+    return HTTPBadRequest() 
 
 @view_config(context=facebook.FacebookAuthenticationComplete, renderer="form_redirect.pt", permission=NO_PERMISSION_REQUIRED)
 def facebook_login_complete(context, request):
@@ -220,6 +258,8 @@ def facebook_login_complete(context, request):
                 'first_name': first_name,
                 'last_name': last_name,
                 'email': email,}
+    appstruct['came_from'] = request.session.get('came_from', None)
+    del request.session['came_from']
     
     return {'form': form.render(appstruct=appstruct)}
 
@@ -261,10 +301,13 @@ def twitter_login_complete(context, request):
                 'first_name': first_name,
                 'last_name': last_name,
                 'email': email,}
+    appstruct['came_from'] = request.session.get('came_from', None)
+    del request.session['came_from']
     
     return {'form': form.render(appstruct=appstruct)}
 
 
 @view_config(context=AuthenticationDenied, permission=NO_PERMISSION_REQUIRED)
 def cloud_login_denied(context, request):
+    del request.session['came_from']
     raise Forbidden(_("Unable to Authenticate"))

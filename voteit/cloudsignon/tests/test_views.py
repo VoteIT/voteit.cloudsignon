@@ -63,7 +63,7 @@ class UsersViewTests(unittest.TestCase):
                                                          ('email', 'dummy@test.com'), 
                                                          ('first_name', 'Dummy'), 
                                                          ('last_name', 'Person'), 
-                                                         ('came_from', '/'), 
+                                                         ('came_from', ''), 
                                                          ('register', 'register')]))
         obj = self._cut(context, request)
         response = obj.facebook_register()
@@ -83,7 +83,7 @@ class UsersViewTests(unittest.TestCase):
                                                          ('email', 'dummy@test.com'), 
                                                          ('first_name', 'Dummy'), 
                                                          ('last_name', 'Person'), 
-                                                         ('came_from', '/'), 
+                                                         ('came_from', ''), 
                                                          ('register', 'register')]))
         obj = self._cut(context, request)
         self.assertRaises(Forbidden, obj.facebook_register)
@@ -99,7 +99,7 @@ class UsersViewTests(unittest.TestCase):
                                                          ('email', 'dummy@test.com'), 
                                                          ('first_name', 'Dummy'), 
                                                          ('last_name', 'Person'), 
-                                                         ('came_from', '/'), 
+                                                         ('came_from', ''), 
                                                          ('register', 'register')]))
         obj = self._cut(context, request)
         response = obj.facebook_register()
@@ -118,7 +118,7 @@ class UsersViewTests(unittest.TestCase):
                                                          ('email', 'dummy@test.com'), 
                                                          ('first_name', 'Dummy'), 
                                                          ('last_name', 'Person'), 
-                                                         ('came_from', '/'), 
+                                                         ('came_from', ''), 
                                                          ('register', 'register')]))
         obj = self._cut(context, request)
         response = obj.facebook_register()
@@ -155,7 +155,7 @@ class UsersViewTests(unittest.TestCase):
                                                          ('email', 'dummy@test.com'), 
                                                          ('first_name', 'Dummy'), 
                                                          ('last_name', 'Person'), 
-                                                         ('came_from', '/'), 
+                                                         ('came_from', ''), 
                                                          ('register', 'register')]))
         obj = self._cut(context, request)
         response = obj.twitter_register()
@@ -175,7 +175,7 @@ class UsersViewTests(unittest.TestCase):
                                                          ('email', 'dummy@test.com'), 
                                                          ('first_name', 'Dummy'), 
                                                          ('last_name', 'Person'), 
-                                                         ('came_from', '/'), 
+                                                         ('came_from', ''), 
                                                          ('register', 'register')]))
         obj = self._cut(context, request)
         self.assertRaises(Forbidden, obj.twitter_register)
@@ -191,7 +191,7 @@ class UsersViewTests(unittest.TestCase):
                                                          ('email', 'dummy@test.com'), 
                                                          ('first_name', 'Dummy'), 
                                                          ('last_name', 'Person'), 
-                                                         ('came_from', '/'), 
+                                                         ('came_from', ''), 
                                                          ('register', 'register')]))
         obj = self._cut(context, request)
         response = obj.twitter_register()
@@ -210,7 +210,7 @@ class UsersViewTests(unittest.TestCase):
                                                          ('email', 'dummy@test.com'), 
                                                          ('first_name', 'Dummy'), 
                                                          ('last_name', 'Person'), 
-                                                         ('came_from', '/'), 
+                                                         ('came_from', ''), 
                                                          ('register', 'register')]))
         obj = self._cut(context, request)
         response = obj.twitter_register()

@@ -9,6 +9,7 @@ from voteit.cloudsignon import VoteITCSO as _
 def cloudsignon(context, request, va, **kw):
     response = {'api': kw['api'],
                 'login_url': login_url,
+                'came_from': request.GET.get('came_from', ''),
                 'providers': request.registry.settings['login_providers'],}
     
     return render('login.pt', response, request = request)
