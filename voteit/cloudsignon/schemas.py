@@ -13,7 +13,7 @@ from voteit.core.schemas.user import came_from_node
 from voteit.cloudsignon import VoteITCSO as _
 
     
-@schema_factory('CSORegisterUserSchema', title = _(u"Registration"))
+@schema_factory('CSORegisterUserSchema', title = _(u"Registration"), description=_('You must complete the form below with the required information to use VoteIT.'))
 class CSORegisterUserSchema(colander.Schema):
     """ CSO registration. """
     userid = colander.SchemaNode(colander.String(),
