@@ -1,0 +1,82 @@
+# Swedish translations for voteit.cloudsignon.
+# Copyright (C) 2012 ORGANIZATION
+# This file is distributed under the same license as the voteit.cloudsignon
+# project.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2012.
+# #, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: voteit.cloudsignon 0.1dev\n"
+"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
+"POT-Creation-Date: 2012-09-03 14:01+0200\n"
+"PO-Revision-Date: 2012-09-03 14:03+0100\n"
+"Last-Translator: Robin Harms Oredsson <robin@betahaus.net>\n"
+"Language-Team: sv <LL@li.org>\n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 0.9.6\n"
+
+#: voteit/cloudsignon/connect.pt:7
+msgid "Connect to Facebook"
+msgstr "Anslut till Facebook"
+
+#: voteit/cloudsignon/connect.pt:15
+msgid "Connect to Twitter"
+msgstr "Anslut till Twitter"
+
+#: voteit/cloudsignon/login.pt:8
+msgid "Login with Facebook"
+msgstr "Logga in med Facebook"
+
+#: voteit/cloudsignon/login.pt:17
+msgid "Login with Twitter"
+msgstr "Logga in med Twitter"
+
+#: voteit/cloudsignon/profile_image_plugins.py:15
+msgid "Facebook"
+msgstr "Facebook"
+
+#. Default: Your profile image is the same as the one you use on Facebook.
+#: voteit/cloudsignon/profile_image_plugins.py:16
+msgid "facebook_profile_image_description"
+msgstr "Din profilbild är samma som den du använder på Facebook."
+
+#: voteit/cloudsignon/profile_image_plugins.py:46
+msgid "Twitter"
+msgstr "Twitter"
+
+#. Default: Your profile image is the same as the one you use on Twitter.
+#: voteit/cloudsignon/profile_image_plugins.py:47
+msgid "twitter_profile_image_description"
+msgstr "Din profilbild är samma som den du använder på Twitter."
+
+#: voteit/cloudsignon/schemas.py:17
+msgid "Registration"
+msgstr "Registrering"
+
+#. Default: Review or complete your registration below.
+#: voteit/cloudsignon/schemas.py:18
+msgid "cso_complete_registration_notice"
+msgstr "Granska eller färdigställ din registrering nedan."
+
+#: voteit/cloudsignon/views.py:47 voteit/cloudsignon/views.py:129
+msgid "Canceled"
+msgstr "Avbruten"
+
+#: voteit/cloudsignon/views.py:67 voteit/cloudsignon/views.py:150
+msgid "Another user has already registered with this token."
+msgstr "En annan användare har redan registrerat sig med denna token."
+
+#: voteit/cloudsignon/views.py:118
+msgid "Unable to authenticate using Facebook"
+msgstr "Kan inte autentisera med Facebook"
+
+#: voteit/cloudsignon/views.py:203
+msgid "Unable to authenticate using Twitter"
+msgstr "Kan inte autentisera med Twitter"
+
+#: voteit/cloudsignon/views.py:313
+msgid "Unable to Authenticate"
+msgstr "Kan inte autentisera"

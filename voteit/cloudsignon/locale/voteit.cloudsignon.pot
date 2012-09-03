@@ -1,0 +1,81 @@
+# Translations template for voteit.cloudsignon.
+# Copyright (C) 2012 ORGANIZATION
+# This file is distributed under the same license as the voteit.cloudsignon project.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2012.
+##, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: voteit.cloudsignon 0.1dev\n"
+"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
+"POT-Creation-Date: 2012-09-03 14:01+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 0.9.6\n"
+
+#: voteit/cloudsignon/connect.pt:7
+msgid "Connect to Facebook"
+msgstr ""
+
+#: voteit/cloudsignon/connect.pt:15
+msgid "Connect to Twitter"
+msgstr ""
+
+#: voteit/cloudsignon/login.pt:8
+msgid "Login with Facebook"
+msgstr ""
+
+#: voteit/cloudsignon/login.pt:17
+msgid "Login with Twitter"
+msgstr ""
+
+#: voteit/cloudsignon/profile_image_plugins.py:15
+msgid "Facebook"
+msgstr ""
+
+#. Default: Your profile image is the same as the one you use on Facebook.
+#: voteit/cloudsignon/profile_image_plugins.py:16
+msgid "facebook_profile_image_description"
+msgstr ""
+
+#: voteit/cloudsignon/profile_image_plugins.py:46
+msgid "Twitter"
+msgstr ""
+
+#. Default: Your profile image is the same as the one you use on Twitter.
+#: voteit/cloudsignon/profile_image_plugins.py:47
+msgid "twitter_profile_image_description"
+msgstr ""
+
+#: voteit/cloudsignon/schemas.py:17
+msgid "Registration"
+msgstr ""
+
+#. Default: Review or complete your registration below.
+#: voteit/cloudsignon/schemas.py:18
+msgid "cso_complete_registration_notice"
+msgstr ""
+
+#: voteit/cloudsignon/views.py:47 voteit/cloudsignon/views.py:129
+msgid "Canceled"
+msgstr ""
+
+#: voteit/cloudsignon/views.py:67 voteit/cloudsignon/views.py:150
+msgid "Another user has already registered with this token."
+msgstr ""
+
+#: voteit/cloudsignon/views.py:118
+msgid "Unable to authenticate using Facebook"
+msgstr ""
+
+#: voteit/cloudsignon/views.py:203
+msgid "Unable to authenticate using Twitter"
+msgstr ""
+
+#: voteit/cloudsignon/views.py:313
+msgid "Unable to Authenticate"
+msgstr ""
+

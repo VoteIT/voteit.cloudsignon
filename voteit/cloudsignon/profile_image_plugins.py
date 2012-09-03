@@ -13,13 +13,13 @@ class FacebookProfileImagePlugin(object):
     
     name = u'facebook_profile_image'
     title = _('Facebook')
-    description = _(u'facebook_profile_image_description', default=u'')
+    description = _(u'facebook_profile_image_description',
+                    default=u"Your profile image is the same as the one you use on Facebook.")
     
     def __init__(self, context):
         self.context = context
     
     def url(self, size):
-        
         if not 'facebook' in self.context.auth_domains:
             return None
 
@@ -27,8 +27,7 @@ class FacebookProfileImagePlugin(object):
         if not oauth_userid:
             return None
         
-        url = 'http://graph.facebook.com/%(UID)s/picture?type=large' % {'UID': oauth_userid}
-        
+        url = 'http://graph.facebook.com/%(UID)s/picture' % {'UID': oauth_userid}
         return url
     
     def is_valid_for_user(self):
@@ -36,7 +35,6 @@ class FacebookProfileImagePlugin(object):
             oauth_userid = self.context.auth_domains['facebook']['oauth_userid']
             if oauth_userid:
                 return True
-        
         return False
 
     
@@ -46,7 +44,8 @@ class TwitterProfileImagePlugin(object):
     
     name = u'twitter_profile_image'
     title = _('Twitter')
-    description = _(u'twitter_profile_image_description', default=u'')
+    description = _(u'twitter_profile_image_description',
+                    default=u"Your profile image is the same as the one you use on Twitter.")
     
     def __init__(self, context):
         self.context = context
@@ -61,7 +60,6 @@ class TwitterProfileImagePlugin(object):
             return None
         
         url = 'http://api.twitter.com/1/users/profile_image?screen_name=%(screen_name)s&size=bigger' % {'screen_name': display_name}
-        
         return url
     
     def is_valid_for_user(self):
@@ -69,7 +67,6 @@ class TwitterProfileImagePlugin(object):
             oauth_userid = self.context.auth_domains['twitter']['oauth_userid']
             if oauth_userid:
                 return True
-        
         return False
 
 
