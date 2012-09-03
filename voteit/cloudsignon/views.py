@@ -205,7 +205,7 @@ class CloudSignOnView(BaseEdit):
 @view_config(context=ISiteRoot, name='facebook_login', permission=NO_PERMISSION_REQUIRED)
 def facebook_login(self, request):
     if request.POST:
-        request.session['came_from'] = request.POST.get('came_from', None) 
+        request.session['came_from'] = request.POST.get('came_from', '') 
         provider = request.registry.velruse_providers['facebook']
         return provider.login(request)
     
@@ -214,7 +214,7 @@ def facebook_login(self, request):
 @view_config(context=ISiteRoot, name='twitter_login', permission=NO_PERMISSION_REQUIRED)
 def twitter_login(self, request):
     if request.POST:
-        request.session['came_from'] = request.POST.get('came_from', None)
+        request.session['came_from'] = request.POST.get('came_from', '')
         provider = request.registry.velruse_providers['twitter']
         return provider.login(request)
     
@@ -258,7 +258,7 @@ def facebook_login_complete(context, request):
                 'first_name': first_name,
                 'last_name': last_name,
                 'email': email,}
-    appstruct['came_from'] = request.session.get('came_from', None)
+    appstruct['came_from'] = request.session.get('came_from', '')
     del request.session['came_from']
     
     return {'form': form.render(appstruct=appstruct)}
@@ -301,7 +301,7 @@ def twitter_login_complete(context, request):
                 'first_name': first_name,
                 'last_name': last_name,
                 'email': email,}
-    appstruct['came_from'] = request.session.get('came_from', None)
+    appstruct['came_from'] = request.session.get('came_from', '')
     del request.session['came_from']
     
     return {'form': form.render(appstruct=appstruct)}
