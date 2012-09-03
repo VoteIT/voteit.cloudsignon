@@ -35,6 +35,8 @@ setup(name='voteit.cloudsignon',
       tests_require= requires,
       test_suite="voteit.cloudsignon",
       entry_points = """\
+      [fanstatic.libraries]
+      voteit_cso_lib = voteit.cloudsignon.fanstaticlib:voteit_cso_lib
       """,
       message_extractors = { '.': [
               ('**.py',   'lingua_python', None ),
