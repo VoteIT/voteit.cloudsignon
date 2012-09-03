@@ -4,6 +4,7 @@
 	<input type="hidden" name="scope" value="email,offline_access" />
 	<input tal:condition="came_from" type="hidden" name="came_from" value="${came_from}" />
     <button name="login" type="submit" class="buttonize" value="login">
+    	<img src="/csostatic/images/f_logo.png" width="16" height="16" />
         <span i18n:translate="">Login with Facebook</span>
 	</button>
 </form>
@@ -12,6 +13,7 @@
 <form action="/twitter_login" method="post">
 	<input tal:condition="came_from" type="hidden" name="came_from" value="${came_from}" />
 	<button name="login" type="submit" class="buttonize" value="login">
+		<img src="/csostatic/images/twitter-bird-light-bgs.png" width="16" height="16" />
         <span i18n:translate="">Login with Twitter</span>
 	</button>
 </form>

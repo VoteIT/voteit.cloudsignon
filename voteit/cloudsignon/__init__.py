@@ -22,3 +22,6 @@ def includeme(config):
     if 'twitter' in providers:
         config.include('velruse.providers.twitter')
         config.add_twitter_login_from_settings(prefix='twitter.')
+        
+    cache_ttl_seconds = int(config.registry.settings.get('cache_ttl_seconds', 7200))
+    config.add_static_view('csostatic', 'voteit.cloudsignon:static', cache_max_age = cache_ttl_seconds)
