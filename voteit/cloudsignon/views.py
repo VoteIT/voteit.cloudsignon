@@ -82,38 +82,43 @@ class CloudSignOnView(BaseEdit):
                             url = urllib.unquote(came_from)
                         return HTTPFound(location = url,
                                          headers = headers)
-
-            controls = self.request.POST.items()
-            try:
-                appstruct = form.validate(controls)
-            except ValidationFailure, e:
-                self.response['form'] = e.render()
+            
+    
+            if 'register' in self.request.POST:
+                controls = self.request.POST.items()
+                try:
+                    appstruct = form.validate(controls)
+                except ValidationFailure, e:
+                    self.response['form'] = e.render()
+                    return self.response
+                
+                name = appstruct['userid']
+                del appstruct['userid']
+                
+                # removing domain data from appstruct
+                del appstruct['oauth_userid']
+                del appstruct['oauth_access_token']
+                
+                # add facebook as selected profile image
+                appstruct['profile_image_plugin'] = 'facebook_profile_image'
+                
+                del appstruct['came_from']
+    
+                obj = createContent('User', creators=[name], **appstruct)
+                self.context.users[name] = obj
+                #setting domain stuff
+                obj.auth_domains['facebook'] = {'oauth_userid': oauth_userid,
+                                                 'oauth_access_token': oauth_access_token,}
+                
+                headers = remember(self.request, name) # login user
+                
+                url = resource_url(self.api.root, self.request)
+                if came_from:
+                    url = urllib.unquote(came_from)
+                return HTTPFound(location=url, headers=headers)
+            else:
+                self.response['form'] = form.render(self.request.POST)
                 return self.response
-            
-            name = appstruct['userid']
-            del appstruct['userid']
-            
-            # removing domain data from appstruct
-            del appstruct['oauth_userid']
-            del appstruct['oauth_access_token']
-            
-            # add facebook as selected profile image
-            appstruct['profile_image_plugin'] = 'facebook_profile_image'
-            
-            del appstruct['came_from']
-
-            obj = createContent('User', creators=[name], **appstruct)
-            self.context.users[name] = obj
-            #setting domain stuff
-            obj.auth_domains['facebook'] = {'oauth_userid': oauth_userid,
-                                             'oauth_access_token': oauth_access_token,}
-            
-            headers = remember(self.request, name) # login user
-            
-            url = resource_url(self.api.root, self.request)
-            if came_from:
-                url = urllib.unquote(came_from)
-            return HTTPFound(location=url, headers=headers)
                 
         raise Forbidden(_("Unable to authenticate using Facebook"))
     
@@ -167,38 +172,42 @@ class CloudSignOnView(BaseEdit):
                         return HTTPFound(location = url,
                                          headers = headers)
 
-            controls = self.request.POST.items()
-            try:
-                appstruct = form.validate(controls)
-            except ValidationFailure, e:
-                self.response['form'] = e.render()
+            if 'register' in self.request.POST:
+                controls = self.request.POST.items()
+                try:
+                    appstruct = form.validate(controls)
+                except ValidationFailure, e:
+                    self.response['form'] = e.render()
+                    return self.response
+                
+                name = appstruct['userid']
+                del appstruct['userid']
+                
+                # removing domain data from appstruct
+                del appstruct['oauth_userid']
+                del appstruct['oauth_access_token']
+                
+                # add twitter as selected profile image
+                appstruct['profile_image_plugin'] = 'twitter_profile_image'
+                
+                del appstruct['came_from']
+    
+                obj = createContent('User', creators=[name], **appstruct)
+                self.context.users[name] = obj
+                #setting domain stuff
+                obj.auth_domains['twitter'] = {'oauth_userid': oauth_userid,
+                                               'oauth_access_token': oauth_access_token,
+                                               'display_name': display_name,}
+                
+                headers = remember(self.request, name) # login user
+                
+                url = resource_url(self.api.root, self.request)
+                if came_from:
+                    url = urllib.unquote(came_from)
+                return HTTPFound(location=url, headers=headers)
+            else:
+                self.response['form'] = form.render(self.request.POST)
                 return self.response
-            
-            name = appstruct['userid']
-            del appstruct['userid']
-            
-            # removing domain data from appstruct
-            del appstruct['oauth_userid']
-            del appstruct['oauth_access_token']
-            
-            # add twitter as selected profile image
-            appstruct['profile_image_plugin'] = 'twitter_profile_image'
-            
-            del appstruct['came_from']
-
-            obj = createContent('User', creators=[name], **appstruct)
-            self.context.users[name] = obj
-            #setting domain stuff
-            obj.auth_domains['twitter'] = {'oauth_userid': oauth_userid,
-                                           'oauth_access_token': oauth_access_token,
-                                           'display_name': display_name,}
-            
-            headers = remember(self.request, name) # login user
-            
-            url = resource_url(self.api.root, self.request)
-            if came_from:
-                url = urllib.unquote(came_from)
-            return HTTPFound(location=url, headers=headers)
                 
         raise Forbidden(_("Unable to authenticate using Twitter"))
 
