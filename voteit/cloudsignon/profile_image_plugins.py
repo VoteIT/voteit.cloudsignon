@@ -68,10 +68,3 @@ class TwitterProfileImagePlugin(object):
             if oauth_userid:
                 return True
         return False
-
-
-def includeme(config):
-    """ Include gravatar plugin
-    """
-    config.registry.registerAdapter(FacebookProfileImagePlugin, (IUser,), IProfileImage, FacebookProfileImagePlugin.name)
-    config.registry.registerAdapter(TwitterProfileImagePlugin, (IUser,), IProfileImage, TwitterProfileImagePlugin.name)

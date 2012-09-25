@@ -31,15 +31,14 @@ class FacebookProfileImageUnitTests(unittest.TestCase):
     def test_url_method(self):
         obj = self._make_obj()
         url = obj.url(size=45)
-        
         self.assertEqual(url,
-                         'http://graph.facebook.com/oauth_userid/picture?type=large')
+                         'http://graph.facebook.com/oauth_userid/picture')
 
     def test_is_valid(self):
         obj = self._make_obj()
-        
         self.assertTrue(obj.is_valid_for_user())
-        
+
+
 class TwitterProfileImageUnitTests(unittest.TestCase):
     
     def setUp(self):
@@ -67,11 +66,9 @@ class TwitterProfileImageUnitTests(unittest.TestCase):
     def test_url_method(self):
         obj = self._make_obj()
         url = obj.url(size=45)
-        
         self.assertEqual(url,
                          'http://api.twitter.com/1/users/profile_image?screen_name=display_name&size=bigger')
 
     def test_is_valid(self):
         obj = self._make_obj()
-        
         self.assertTrue(obj.is_valid_for_user())
