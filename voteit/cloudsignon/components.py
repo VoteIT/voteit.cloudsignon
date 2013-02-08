@@ -14,7 +14,7 @@ def cloudsignon(context, request, va, **kw):
                 'came_from': request.GET.get('came_from', ''),
                 'providers': request.registry.settings['login_providers'],}
     
-    return render('login.pt', response, request = request)
+    return render('templates/login.pt', response, request = request)
 
 @view_action('connect_forms', 'cloudsignconnect')
 def cloudsignconnect(context, request, va, **kw):
@@ -26,4 +26,4 @@ def cloudsignconnect(context, request, va, **kw):
                 'login_url': login_url,
                 'providers': request.registry.settings['login_providers'],}
     
-    return render('connect.pt', response, request = request)
+    return render('templates/connect.pt', response, request = request)

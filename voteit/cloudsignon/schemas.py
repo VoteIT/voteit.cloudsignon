@@ -2,9 +2,7 @@ import colander
 import deform
 from betahaus.pyracont.decorators import schema_factory
 
-from voteit.core.validators import deferred_new_userid_validator
 from voteit.core.schemas.user import userid_node
-from voteit.core.schemas.user import password_node
 from voteit.core.schemas.user import email_node
 from voteit.core.schemas.user import first_name_node
 from voteit.core.schemas.user import last_name_node

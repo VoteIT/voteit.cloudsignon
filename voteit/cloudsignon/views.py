@@ -1,5 +1,3 @@
-import colander
-import json
 import urllib
 
 from betahaus.pyracont.factories import createContent
@@ -11,16 +9,11 @@ from pyramid.httpexceptions import HTTPFound
 from pyramid.httpexceptions import HTTPBadRequest
 from pyramid.security import NO_PERMISSION_REQUIRED
 from pyramid.security import remember
-from pyramid.traversal import find_root
 from pyramid.url import resource_url
 from pyramid.view import view_config
 from velruse.providers import twitter
 from velruse.providers import facebook
-from velruse import AuthenticationComplete
 from velruse import AuthenticationDenied
-from velruse import login_url
-from httplib2 import Http
-from urllib import urlencode
 
 from voteit.core.models.interfaces import ISiteRoot
 from voteit.core.models.interfaces import IUser
@@ -229,7 +222,7 @@ def twitter_login(self, request):
     
     return HTTPBadRequest() 
 
-@view_config(context=facebook.FacebookAuthenticationComplete, renderer="form_redirect.pt", permission=NO_PERMISSION_REQUIRED)
+@view_config(context=facebook.FacebookAuthenticationComplete, renderer="templates/form_redirect.pt", permission=NO_PERMISSION_REQUIRED)
 def facebook_login_complete(context, request):
     result = {
         'profile': context.profile,
@@ -272,7 +265,7 @@ def facebook_login_complete(context, request):
     
     return {'form': form.render(appstruct=appstruct)}
 
-@view_config(context=twitter.TwitterAuthenticationComplete, renderer="form_redirect.pt", permission=NO_PERMISSION_REQUIRED)
+@view_config(context=twitter.TwitterAuthenticationComplete, renderer="templates/form_redirect.pt", permission=NO_PERMISSION_REQUIRED)
 def twitter_login_complete(context, request):
     result = {
         'profile': context.profile,
