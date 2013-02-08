@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: voteit.cloudsignon 0.1dev\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2012-09-03 14:01+0200\n"
+"POT-Creation-Date: 2013-02-08 14:38+0100\n"
 "PO-Revision-Date: 2012-09-03 14:03+0100\n"
 "Last-Translator: Robin Harms Oredsson <robin@betahaus.net>\n"
 "Language-Team: sv <LL@li.org>\n"
@@ -18,65 +18,66 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 0.9.6\n"
 
-#: voteit/cloudsignon/connect.pt:7
-msgid "Connect to Facebook"
-msgstr "Anslut till Facebook"
-
-#: voteit/cloudsignon/connect.pt:15
-msgid "Connect to Twitter"
-msgstr "Anslut till Twitter"
-
-#: voteit/cloudsignon/login.pt:8
-msgid "Login with Facebook"
-msgstr "Logga in med Facebook"
-
-#: voteit/cloudsignon/login.pt:17
-msgid "Login with Twitter"
-msgstr "Logga in med Twitter"
-
+#: voteit/cloudsignon/components.py:22
 #: voteit/cloudsignon/profile_image_plugins.py:15
 msgid "Facebook"
 msgstr "Facebook"
+
+#: voteit/cloudsignon/components.py:23
+#: voteit/cloudsignon/profile_image_plugins.py:46
+msgid "Twitter"
+msgstr "Twitter"
+
+#: voteit/cloudsignon/components.py:30
+msgid "Connect to Facebook"
+msgstr "Anslut till Facebook"
+
+#: voteit/cloudsignon/components.py:31
+msgid "Connect to Twitter"
+msgstr "Anslut till Twitter"
 
 #. Default: Your profile image is the same as the one you use on Facebook.
 #: voteit/cloudsignon/profile_image_plugins.py:16
 msgid "facebook_profile_image_description"
 msgstr "Din profilbild är samma som den du använder på Facebook."
 
-#: voteit/cloudsignon/profile_image_plugins.py:46
-msgid "Twitter"
-msgstr "Twitter"
-
 #. Default: Your profile image is the same as the one you use on Twitter.
 #: voteit/cloudsignon/profile_image_plugins.py:47
 msgid "twitter_profile_image_description"
 msgstr "Din profilbild är samma som den du använder på Twitter."
 
-#: voteit/cloudsignon/schemas.py:17
+#: voteit/cloudsignon/schemas.py:15
 msgid "Registration"
 msgstr "Registrering"
 
 #. Default: Review or complete your registration below.
-#: voteit/cloudsignon/schemas.py:18
+#: voteit/cloudsignon/schemas.py:16
 msgid "cso_complete_registration_notice"
 msgstr "Granska eller färdigställ din registrering nedan."
 
-#: voteit/cloudsignon/views.py:47 voteit/cloudsignon/views.py:129
+#: voteit/cloudsignon/views.py:40 voteit/cloudsignon/views.py:127
 msgid "Canceled"
 msgstr "Avbruten"
 
-#: voteit/cloudsignon/views.py:67 voteit/cloudsignon/views.py:150
+#: voteit/cloudsignon/views.py:60 voteit/cloudsignon/views.py:148
 msgid "Another user has already registered with this token."
 msgstr "En annan användare har redan registrerat sig med denna token."
 
-#: voteit/cloudsignon/views.py:118
+#: voteit/cloudsignon/views.py:116
 msgid "Unable to authenticate using Facebook"
 msgstr "Kan inte autentisera med Facebook"
 
-#: voteit/cloudsignon/views.py:203
+#: voteit/cloudsignon/views.py:205
 msgid "Unable to authenticate using Twitter"
 msgstr "Kan inte autentisera med Twitter"
 
-#: voteit/cloudsignon/views.py:313
+#: voteit/cloudsignon/views.py:315
 msgid "Unable to Authenticate"
 msgstr "Kan inte autentisera"
+
+#~ msgid "Login with Facebook"
+#~ msgstr "Logga in med Facebook"
+
+#~ msgid "Login with Twitter"
+#~ msgstr "Logga in med Twitter"
+
