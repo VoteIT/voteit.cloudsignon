@@ -16,7 +16,7 @@ requires = (
 
 setup(name='voteit.cloudsignon',
       version='0.1dev',
-      description='Cloud sign on for VoteIT',
+      description='Cloud signon for VoteIT',
       long_description=README + '\n\n' +  CHANGES,
       classifiers=[
         "Programming Language :: Python",
@@ -27,7 +27,7 @@ setup(name='voteit.cloudsignon',
       author='VoteIT development team + contributors',
       author_email='info@voteit.se',
       url='http://www.voteit.se',
-      keywords='web pylons pyramid',
+      keywords='web pylons pyramid voteit',
       packages=find_packages(),
       include_package_data=True,
       zip_safe=False,
@@ -41,6 +41,5 @@ setup(name='voteit.cloudsignon',
       message_extractors = { '.': [
               ('**.py',   'lingua_python', None ),
               ('**.pt',   'lingua_xml', None ),
-              ('**.zcml',   'lingua_zcml', None ),
               ]},
       )
