@@ -10,25 +10,43 @@ VoteITCSO = TranslationStringFactory('voteit.cloudsignon')
 def includeme(config):
     config.scan('voteit.cloudsignon')
     config.add_translation_dirs('voteit.cloudsignon:locale/')
-    
-    # determine which providers we want to configure
-    providers = config.registry.settings.get('login_providers', '')
-    providers = filter(None, [p.strip()
-                              for line in providers.splitlines()
-                              for p in line.split(', ')])
-    config.registry.settings['login_providers'] = providers
-        
-    if 'facebook' in providers:
-        from voteit.cloudsignon.profile_image_plugins import FacebookProfileImagePlugin
-        config.registry.registerAdapter(FacebookProfileImagePlugin, (IUser,), IProfileImage, FacebookProfileImagePlugin.name)
-        config.include('velruse.providers.facebook')
-        config.add_facebook_login_from_settings(prefix='facebook.')
-
-    if 'twitter' in providers:
-        from voteit.cloudsignon.profile_image_plugins import TwitterProfileImagePlugin
-        config.registry.registerAdapter(TwitterProfileImagePlugin, (IUser,), IProfileImage, TwitterProfileImagePlugin.name)
-        config.include('velruse.providers.twitter')
-        config.add_twitter_login_from_settings(prefix='twitter.')
-        
+    configure_providers(config)
     cache_ttl_seconds = int(config.registry.settings.get('cache_ttl_seconds', 7200))
     config.add_static_view('csostatic', 'voteit.cloudsignon:static', cache_max_age = cache_ttl_seconds)
+
+def add_facebook(config, consumer_key, consumer_secret, **kw):
+    from velruse.providers.facebook import add_facebook_login
+    add_facebook_login(config, consumer_key, consumer_secret, **kw)
+    from voteit.cloudsignon.profile_image_plugins import FacebookProfileImagePlugin
+    config.registry.registerAdapter(FacebookProfileImagePlugin, (IUser,), IProfileImage, FacebookProfileImagePlugin.name)
+
+def add_twitter(config, consumer_key, consumer_secret, **kw):
+    from velruse.providers.twitter import add_twitter_login
+    add_twitter_login(config, consumer_key, consumer_secret, **kw)
+    from voteit.cloudsignon.profile_image_plugins import TwitterProfileImagePlugin
+    config.registry.registerAdapter(TwitterProfileImagePlugin, (IUser,), IProfileImage, TwitterProfileImagePlugin.name)
+
+def configure_providers(config):
+    import ConfigParser
+    from os.path import isfile
+
+    provider_methods = {'facebook': add_facebook,
+                        'twitter': add_twitter,}
+
+    file_name = config.registry.settings.get('login_providers', 'etc/login_providers.ini')
+    if not isfile(file_name):
+        print u"CloudSignOn can't find any login providers file at: %s - won't add or configure any providers" % file_name
+        return
+
+    config.registry.settings['login_providers'] = []
+    parser = ConfigParser.RawConfigParser()
+    parser.read(file_name)
+    sections = parser.sections()
+    for section in parser.sections():
+        consumer_key = parser.get(section, 'consumer_key')
+        consumer_secret = parser.get(section, 'consumer_secret')
+        provider_methods[section](config, consumer_key, consumer_secret)
+        config.registry.settings['login_providers'].append(section)
+        #FIXME: Add more options to config file
+    if not sections:
+        print u"CloudSignOn can't find any sections in file %s - can't configure any providers."

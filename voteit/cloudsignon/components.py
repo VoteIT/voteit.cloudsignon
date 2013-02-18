@@ -7,10 +7,10 @@ from voteit.cloudsignon.fanstaticlib import voteit_cso
 
 
 def login_provider(context, request, va, **kw):
-    voteit_cso.need()
     providers = request.registry.settings.get('login_providers', ())
     if va.name not in providers:
         return u""
+    voteit_cso.need()
     api = kw['api']
     response = dict(
         api = api,
