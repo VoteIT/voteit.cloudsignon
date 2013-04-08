@@ -30,9 +30,9 @@ class CloudSignOnView(BaseEdit):
     
     @view_config(context=ISiteRoot, name='facebook_register', renderer="voteit.core.views:templates/base_edit.pt", permission=NO_PERMISSION_REQUIRED)
     def facebook_register(self):
-        
-        schema = createSchema('CSORegisterUserSchema').bind(context=self.context, request=self.request)
+        schema = createSchema('CSORegisterUserSchema')
         add_csrf_token(self.context, self.request, schema)
+        schema = schema.bind(context=self.context, request=self.request, api = self.api)
         form = Form(schema, buttons=(button_register,button_cancel,))
         self.api.register_form_resources(form)
         
@@ -117,15 +117,14 @@ class CloudSignOnView(BaseEdit):
     
     @view_config(context=ISiteRoot, name='twitter_register', renderer="voteit.core.views:templates/base_edit.pt", permission=NO_PERMISSION_REQUIRED)
     def twitter_register(self):
-        
-        schema = createSchema('CSORegisterUserSchema').bind(context=self.context, request=self.request)
+        schema = createSchema('CSORegisterUserSchema')
         add_csrf_token(self.context, self.request, schema)
+        schema = schema.bind(context=self.context, request=self.request, api = self.api)
         form = Form(schema, buttons=(button_register,button_cancel,))
         self.api.register_form_resources(form)
         
         if 'cancel' in self.request.POST:
             self.api.flash_messages.add(_(u"Canceled"))
-
             url = resource_url(self.api.root, self.request)
             return HTTPFound(location=url)
 
@@ -229,8 +228,9 @@ def facebook_login_complete(context, request):
         'credentials': context.credentials,
     }
     
-    schema = createSchema('CSORegisterUserSchema').bind(context=context, request=request)
-    add_csrf_token(context, request, schema)
+    schema = createSchema('CSORegisterUserSchema')
+    add_csrf_token(self.context, self.request, schema)
+    schema = schema.bind(context=self.context, request=self.request, api = self.api)
     form = Form(schema, action='/facebook_register', buttons=(button_register,))
     
     oauth_token = result['credentials']['oauthAccessToken']
@@ -272,8 +272,9 @@ def twitter_login_complete(context, request):
         'credentials': context.credentials,
     }
     
-    schema = createSchema('CSORegisterUserSchema').bind(context=context, request=request)
-    add_csrf_token(context, request, schema)
+    schema = createSchema('CSORegisterUserSchema')
+    add_csrf_token(self.context, self.request, schema)
+    schema = schema.bind(context=self.context, request=self.request, api = self.api)
     form = Form(schema, action='/twitter_register', buttons=(button_register,))
     
     oauth_token = result['credentials']['oauthAccessToken']
