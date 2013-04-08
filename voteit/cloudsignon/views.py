@@ -230,7 +230,7 @@ def facebook_login_complete(context, request):
     
     schema = createSchema('CSORegisterUserSchema')
     add_csrf_token(context, request, schema)
-    schema = schema.bind(context=self.context, request=self.request, api = self.api)
+    schema = schema.bind(context=context, request=request)
     form = Form(schema, action='/facebook_register', buttons=(button_register,))
     
     oauth_token = result['credentials']['oauthAccessToken']
@@ -274,7 +274,7 @@ def twitter_login_complete(context, request):
     
     schema = createSchema('CSORegisterUserSchema')
     add_csrf_token(context, request, schema)
-    schema = schema.bind(context=self.context, request=self.request, api = self.api)
+    schema = schema.bind(context=context, request=request)
     form = Form(schema, action='/twitter_register', buttons=(button_register,))
     
     oauth_token = result['credentials']['oauthAccessToken']
