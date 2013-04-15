@@ -13,6 +13,7 @@ from pyramid.url import resource_url
 from pyramid.view import view_config
 from velruse.providers import twitter
 from velruse.providers import facebook
+from velruse.providers import openid
 from velruse import AuthenticationDenied
 
 from voteit.core.models.interfaces import ISiteRoot
@@ -203,13 +204,83 @@ class CloudSignOnView(BaseEdit):
                 
         raise Forbidden(_("Unable to authenticate using Twitter"))
 
+    @view_config(context=ISiteRoot, name='openid_register', renderer="voteit.core.views:templates/base_edit.pt",
+                 permission=NO_PERMISSION_REQUIRED)
+    def openid_register(self):
+        schema = createSchema('CSORegisterUserOpenIDSchema')
+        add_csrf_token(self.context, self.request, schema)
+        schema = schema.bind(context=self.context, request=self.request, api = self.api)
+        form = Form(schema, buttons=(button_register,button_cancel,))
+        self.api.register_form_resources(form)
+
+        if 'cancel' in self.request.POST:
+            self.api.flash_messages.add(_(u"Canceled"))
+            url = resource_url(self.api.root, self.request)
+            return HTTPFound(location=url)
+
+        if self.request.POST:
+            post = dict(self.request.POST)
+            
+            openid_identifier = post['openid_identifier']
+            userid = post['userid']
+            came_from = post['came_from']
+            
+            # Logged in user, connect openid_identifier
+            if self.api.userid:
+                user = self.api.user_profile
+                #check that no other user has this token already
+                other_user = self.api.root.users.get_auth_domain_user('openid', 'openid_identifier', openid_identifier)
+                if other_user and user != other_user:
+                    raise Forbidden(_("Another user has already registered with this identifier."))
+                #setting domain stuff
+                user.auth_domains['openid'] = {'openid_identifier': openid_identifier,}
+                url = resource_url(user, self.request)
+                return HTTPFound(location=url)
+            else:
+                # Find user with auth token and log it in
+                user = self.api.root.users.get_auth_domain_user('openid', 'openid_identifier', openid_identifier)
+                if user:
+                    if IUser.providedBy(user):
+                        headers = remember(self.request, user.__name__)
+                        url = resource_url(self.context, self.request)
+                        if came_from:
+                            url = urllib.unquote(came_from)
+                        return HTTPFound(location = url,
+                                         headers = headers)
+
+            if 'register' in self.request.POST:
+                controls = self.request.POST.items()
+                try:
+                    appstruct = form.validate(controls)
+                except ValidationFailure, e:
+                    self.response['form'] = e.render()
+                    return self.response
+                
+                userid = appstruct['userid']
+                email = appstruct['email']
+                first_name = appstruct['first_name']
+                last_name = appstruct['last_name']
+                obj = createContent('User', creators=[userid], email = email, first_name = first_name, last_name = last_name)
+                self.context.users[userid] = obj
+                #setting domain stuff
+                obj.auth_domains['openid'] = {'openid_identifier': openid_identifier,}
+                headers = remember(self.request, userid) # login user
+                url = resource_url(self.api.root, self.request)
+                if came_from:
+                    url = urllib.unquote(came_from)
+                return HTTPFound(location=url, headers=headers)
+            else:
+                self.response['form'] = form.render(self.request.POST)
+                return self.response
+        raise Forbidden(_("Unable to authenticate using OpenID"))
+
+
 @view_config(context=ISiteRoot, name='facebook_login', permission=NO_PERMISSION_REQUIRED)
 def facebook_login(self, request):
     if request.POST:
         request.session['came_from'] = request.POST.get('came_from', '') 
         provider = request.registry.velruse_providers['facebook']
         return provider.login(request)
-    
     return HTTPBadRequest()
     
 @view_config(context=ISiteRoot, name='twitter_login', permission=NO_PERMISSION_REQUIRED)
@@ -218,8 +289,15 @@ def twitter_login(self, request):
         request.session['came_from'] = request.POST.get('came_from', '')
         provider = request.registry.velruse_providers['twitter']
         return provider.login(request)
-    
-    return HTTPBadRequest() 
+    return HTTPBadRequest()
+
+@view_config(context=ISiteRoot, name='openid_login', permission=NO_PERMISSION_REQUIRED)
+def openid_login(self, request):
+    if request.POST:
+        request.session['came_from'] = request.POST.get('came_from', '')
+        provider = request.registry.velruse_providers['openid']
+        return provider.login(request)
+    return HTTPBadRequest()
 
 @view_config(context=facebook.FacebookAuthenticationComplete, renderer="templates/form_redirect.pt", permission=NO_PERMISSION_REQUIRED)
 def facebook_login_complete(context, request):
@@ -305,6 +383,16 @@ def twitter_login_complete(context, request):
     
     return {'form': form.render(appstruct=appstruct)}
 
+@view_config(context = openid.AuthenticationComplete, renderer = "templates/form_redirect.pt", permission = NO_PERMISSION_REQUIRED)
+def openid_login_complete(context, request):
+    context.profile['accounts']
+    schema = createSchema('CSORegisterUserOpenIDSchema').bind(context=context, request=request)
+    form = Form(schema, action='/openid_register', buttons=(button_register,))
+    openid_identifier = context.profile['accounts'][0]['username']
+    appstruct = {'openid_identifier': openid_identifier,
+                 'came_from': request.session.get('came_from', '')}
+    del request.session['came_from']
+    return {'form': form.render(appstruct=appstruct)}
 
 @view_config(context=AuthenticationDenied, permission=NO_PERMISSION_REQUIRED)
 def cloud_login_denied(context, request):

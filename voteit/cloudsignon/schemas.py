@@ -30,3 +30,15 @@ class CSORegisterUserSchema(colander.Schema):
                                        widget = deform.widget.HiddenWidget(),
                                        missing=u"",)
     came_from = came_from_node()
+
+
+@schema_factory('CSORegisterUserOpenIDSchema',
+                title = _(u"Registration"),)
+class CSORegisterUserOpenIDSchema(colander.Schema):
+    userid = userid_node()
+    email = email_node()
+    first_name = first_name_node()
+    last_name = last_name_node()
+    openid_identifier = colander.SchemaNode(colander.String(),
+                                            widget = deform.widget.HiddenWidget(),)
+    came_from = came_from_node()

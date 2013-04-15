@@ -1,0 +1,8 @@
+<form action="/openid_login" method="post">
+    <input tal:condition="came_from" type="hidden" name="came_from" value="${came_from}" />
+    <input name="openid_identifier" />
+    <button name="login" type="submit" class="buttonize" value="login">
+        <img src="/csostatic/images/openid.gif" width="16" height="16" />
+        ${title}
+    </button>
+</form>
