@@ -40,8 +40,6 @@ def add_openid(config, *args, **kw):
     from velruse.providers.openid import add_openid_login
     realm = kw.pop('realm')
     add_openid_login(config, realm = realm, **kw)
-    #from voteit.cloudsignon.profile_image_plugins import TwitterProfileImagePlugin
-    #config.registry.registerAdapter(TwitterProfileImagePlugin, name = TwitterProfileImagePlugin.name)
 
 def configure_providers(config):
     import ConfigParser

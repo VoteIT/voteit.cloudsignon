@@ -41,4 +41,6 @@ class CSORegisterUserOpenIDSchema(colander.Schema):
     last_name = last_name_node()
     openid_identifier = colander.SchemaNode(colander.String(),
                                             widget = deform.widget.HiddenWidget(),)
+    domain = colander.SchemaNode(colander.String(),
+                                 widget = deform.widget.HiddenWidget(),)
     came_from = came_from_node()

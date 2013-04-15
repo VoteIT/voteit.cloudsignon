@@ -222,6 +222,7 @@ class CloudSignOnView(BaseEdit):
             post = dict(self.request.POST)
             
             openid_identifier = post['openid_identifier']
+            domain = post['domain']
             userid = post['userid']
             came_from = post['came_from']
             
@@ -233,7 +234,8 @@ class CloudSignOnView(BaseEdit):
                 if other_user and user != other_user:
                     raise Forbidden(_("Another user has already registered with this identifier."))
                 #setting domain stuff
-                user.auth_domains['openid'] = {'openid_identifier': openid_identifier,}
+                user.auth_domains['openid'] = {'openid_identifier': openid_identifier,
+                                               'domain': domain}
                 url = resource_url(user, self.request)
                 return HTTPFound(location=url)
             else:
@@ -263,7 +265,8 @@ class CloudSignOnView(BaseEdit):
                 obj = createContent('User', creators=[userid], email = email, first_name = first_name, last_name = last_name)
                 self.context.users[userid] = obj
                 #setting domain stuff
-                obj.auth_domains['openid'] = {'openid_identifier': openid_identifier,}
+                obj.auth_domains['openid'] = {'openid_identifier': openid_identifier,
+                                              'domain': domain}
                 headers = remember(self.request, userid) # login user
                 url = resource_url(self.api.root, self.request)
                 if came_from:
@@ -385,11 +388,12 @@ def twitter_login_complete(context, request):
 
 @view_config(context = openid.AuthenticationComplete, renderer = "templates/form_redirect.pt", permission = NO_PERMISSION_REQUIRED)
 def openid_login_complete(context, request):
-    context.profile['accounts']
     schema = createSchema('CSORegisterUserOpenIDSchema').bind(context=context, request=request)
     form = Form(schema, action='/openid_register', buttons=(button_register,))
     openid_identifier = context.profile['accounts'][0]['username']
+    domain = context.profile['accounts'][0]['domain']
     appstruct = {'openid_identifier': openid_identifier,
+                 'domain': domain,
                  'came_from': request.session.get('came_from', '')}
     del request.session['came_from']
     return {'form': form.render(appstruct=appstruct)}
