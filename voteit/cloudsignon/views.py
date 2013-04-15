@@ -23,6 +23,7 @@ from voteit.core.models.schemas import add_csrf_token
 from voteit.core.models.schemas import button_register
 from voteit.core.models.schemas import button_cancel
 from voteit.core.validators import NEW_USERID_PATTERN
+from voteit.core.models.flash_messages import FlashMessages
 
 from voteit.cloudsignon import VoteITCSO as _
 
@@ -220,7 +221,6 @@ class CloudSignOnView(BaseEdit):
 
         if self.request.POST:
             post = dict(self.request.POST)
-            
             openid_identifier = post['openid_identifier']
             domain = post['domain']
             userid = post['userid']
@@ -388,10 +388,18 @@ def twitter_login_complete(context, request):
 
 @view_config(context = openid.AuthenticationComplete, renderer = "templates/form_redirect.pt", permission = NO_PERMISSION_REQUIRED)
 def openid_login_complete(context, request):
+    domain = context.profile['accounts'][0]['domain']
+    openid_identifier = context.profile['accounts'][0]['username']
+    force_domain = request.registry.settings.get('openid_domain', None)
+    if force_domain and domain != force_domain:
+        fm = FlashMessages(request)
+        msg = _(u"openid_domain_not_allowed_error",
+                default = u"OpenID logins only allowed from this domain: ${force_domain} - domain was: ${domain}",
+                mapping = {'force_domain': force_domain, 'domain': domain})
+        fm.add(msg, type = 'error')
+        return HTTPFound(location = '/')
     schema = createSchema('CSORegisterUserOpenIDSchema').bind(context=context, request=request)
     form = Form(schema, action='/openid_register', buttons=(button_register,))
-    openid_identifier = context.profile['accounts'][0]['username']
-    domain = context.profile['accounts'][0]['domain']
     appstruct = {'openid_identifier': openid_identifier,
                  'domain': domain,
                  'came_from': request.session.get('came_from', '')}

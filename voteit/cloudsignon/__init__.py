@@ -39,6 +39,9 @@ def add_openid(config, *args, **kw):
     """
     from velruse.providers.openid import add_openid_login
     realm = kw.pop('realm')
+    if 'domain' in kw:
+        domain = kw.pop('domain')
+        config.registry.settings['openid_domain'] = domain
     add_openid_login(config, realm = realm, **kw)
 
 def configure_providers(config):
