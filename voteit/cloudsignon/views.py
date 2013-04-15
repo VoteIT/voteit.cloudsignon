@@ -9,7 +9,6 @@ from pyramid.httpexceptions import HTTPFound
 from pyramid.httpexceptions import HTTPBadRequest
 from pyramid.security import NO_PERMISSION_REQUIRED
 from pyramid.security import remember
-from pyramid.url import resource_url
 from pyramid.view import view_config
 from velruse.providers import twitter
 from velruse.providers import facebook
@@ -41,7 +40,7 @@ class CloudSignOnView(BaseEdit):
         if 'cancel' in self.request.POST:
             self.api.flash_messages.add(_(u"Canceled"))
 
-            url = resource_url(self.api.root, self.request)
+            url = self.request.resource_url(self.api.root)
             return HTTPFound(location=url)
 
         if self.request.POST:
@@ -64,7 +63,7 @@ class CloudSignOnView(BaseEdit):
                 #setting domain stuff
                 user.auth_domains['facebook'] = {'oauth_userid': oauth_userid, 
                                                  'oauth_access_token': oauth_access_token,}
-                url = resource_url(user, self.request)
+                url = self.request.resource_url(user)
                 return HTTPFound(location=url)
             else:
                 # Find user with auth token and log it in
@@ -72,7 +71,7 @@ class CloudSignOnView(BaseEdit):
                 if user:
                     if IUser.providedBy(user):
                         headers = remember(self.request, user.__name__)
-                        url = resource_url(self.context, self.request)
+                        url = self.request.resource_url(self.context)
                         if came_from:
                             url = urllib.unquote(came_from)
                         return HTTPFound(location = url,
@@ -107,7 +106,7 @@ class CloudSignOnView(BaseEdit):
                 
                 headers = remember(self.request, name) # login user
                 
-                url = resource_url(self.api.root, self.request)
+                url = self.request.resource_url(self.api.root)
                 if came_from:
                     url = urllib.unquote(came_from)
                 return HTTPFound(location=url, headers=headers)
@@ -127,7 +126,7 @@ class CloudSignOnView(BaseEdit):
         
         if 'cancel' in self.request.POST:
             self.api.flash_messages.add(_(u"Canceled"))
-            url = resource_url(self.api.root, self.request)
+            url = self.request.resource_url(self.api.root)
             return HTTPFound(location=url)
 
         if self.request.POST:
@@ -152,7 +151,7 @@ class CloudSignOnView(BaseEdit):
                 user.auth_domains['twitter'] = {'oauth_userid': oauth_userid,
                                                 'oauth_access_token': oauth_access_token,
                                                 'display_name': display_name,}
-                url = resource_url(user, self.request)
+                url = self.request.resource_url(user)
                 return HTTPFound(location=url)
             else:
                 # Find user with auth token and log it in
@@ -160,7 +159,7 @@ class CloudSignOnView(BaseEdit):
                 if user:
                     if IUser.providedBy(user):
                         headers = remember(self.request, user.__name__)
-                        url = resource_url(self.context, self.request)
+                        url = self.request.resource_url(self.context)
                         if came_from:
                             url = urllib.unquote(came_from)
                         return HTTPFound(location = url,
@@ -195,7 +194,7 @@ class CloudSignOnView(BaseEdit):
                 
                 headers = remember(self.request, name) # login user
                 
-                url = resource_url(self.api.root, self.request)
+                url = self.request.resource_url(self.api.root)
                 if came_from:
                     url = urllib.unquote(came_from)
                 return HTTPFound(location=url, headers=headers)
@@ -216,7 +215,7 @@ class CloudSignOnView(BaseEdit):
 
         if 'cancel' in self.request.POST:
             self.api.flash_messages.add(_(u"Canceled"))
-            url = resource_url(self.api.root, self.request)
+            url = self.request.resource_url(self.api.root)
             return HTTPFound(location=url)
 
         if self.request.POST:
@@ -236,7 +235,7 @@ class CloudSignOnView(BaseEdit):
                 #setting domain stuff
                 user.auth_domains['openid'] = {'openid_identifier': openid_identifier,
                                                'domain': domain}
-                url = resource_url(user, self.request)
+                url = self.request.resource_url(user)
                 return HTTPFound(location=url)
             else:
                 # Find user with auth token and log it in
@@ -244,7 +243,7 @@ class CloudSignOnView(BaseEdit):
                 if user:
                     if IUser.providedBy(user):
                         headers = remember(self.request, user.__name__)
-                        url = resource_url(self.context, self.request)
+                        url = self.request.resource_url(self.context)
                         if came_from:
                             url = urllib.unquote(came_from)
                         return HTTPFound(location = url,
@@ -268,7 +267,7 @@ class CloudSignOnView(BaseEdit):
                 obj.auth_domains['openid'] = {'openid_identifier': openid_identifier,
                                               'domain': domain}
                 headers = remember(self.request, userid) # login user
-                url = resource_url(self.api.root, self.request)
+                url = self.request.resource_url(self.api.root)
                 if came_from:
                     url = urllib.unquote(came_from)
                 return HTTPFound(location=url, headers=headers)
