@@ -68,14 +68,13 @@ class CloudSignOnView(BaseEdit):
             else:
                 # Find user with auth token and log it in
                 user = self.api.root.users.get_user_by_oauth_token('facebook', oauth_access_token)
-                if user:
-                    if IUser.providedBy(user):
-                        headers = remember(self.request, user.__name__)
-                        url = self.request.resource_url(self.context)
-                        if came_from:
-                            url = urllib.unquote(came_from)
-                        return HTTPFound(location = url,
-                                         headers = headers)
+                if IUser.providedBy(user):
+                    headers = remember(self.request, user.__name__)
+                    url = self.request.resource_url(self.context)
+                    if came_from:
+                        url = urllib.unquote(came_from)
+                    return HTTPFound(location = url,
+                                     headers = headers)
             
     
             if 'register' in self.request.POST:
@@ -156,14 +155,13 @@ class CloudSignOnView(BaseEdit):
             else:
                 # Find user with auth token and log it in
                 user = self.api.root.users.get_user_by_oauth_token('twitter', oauth_access_token)
-                if user:
-                    if IUser.providedBy(user):
-                        headers = remember(self.request, user.__name__)
-                        url = self.request.resource_url(self.context)
-                        if came_from:
-                            url = urllib.unquote(came_from)
-                        return HTTPFound(location = url,
-                                         headers = headers)
+                if IUser.providedBy(user):
+                    headers = remember(self.request, user.__name__)
+                    url = self.request.resource_url(self.context)
+                    if came_from:
+                        url = urllib.unquote(came_from)
+                    return HTTPFound(location = url,
+                                     headers = headers)
 
             if 'register' in self.request.POST:
                 controls = self.request.POST.items()
@@ -240,14 +238,13 @@ class CloudSignOnView(BaseEdit):
             else:
                 # Find user with auth token and log it in
                 user = self.api.root.users.get_auth_domain_user('openid', 'openid_identifier', openid_identifier)
-                if user:
-                    if IUser.providedBy(user):
-                        headers = remember(self.request, user.__name__)
-                        url = self.request.resource_url(self.context)
-                        if came_from:
-                            url = urllib.unquote(came_from)
-                        return HTTPFound(location = url,
-                                         headers = headers)
+                if IUser.providedBy(user):
+                    headers = remember(self.request, user.__name__)
+                    url = self.request.resource_url(self.context)
+                    if came_from:
+                        url = urllib.unquote(came_from)
+                    return HTTPFound(location = url,
+                                     headers = headers)
 
             if 'register' in self.request.POST:
                 controls = self.request.POST.items()
