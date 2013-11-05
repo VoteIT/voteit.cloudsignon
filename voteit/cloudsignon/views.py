@@ -14,7 +14,6 @@ from velruse.providers import twitter
 from velruse.providers import facebook
 from velruse.providers import openid
 from velruse import AuthenticationDenied
-
 from voteit.core.models.interfaces import ISiteRoot
 from voteit.core.models.interfaces import IUser
 from voteit.core.views.base_edit import BaseEdit
@@ -22,7 +21,7 @@ from voteit.core.models.schemas import add_csrf_token
 from voteit.core.models.schemas import button_register
 from voteit.core.models.schemas import button_cancel
 from voteit.core.validators import NEW_USERID_PATTERN
-from voteit.core.models.flash_messages import FlashMessages
+from voteit.core.models.interfaces import IFlashMessages
 
 from voteit.cloudsignon import VoteITCSO as _
 
@@ -34,7 +33,7 @@ class CloudSignOnView(BaseEdit):
         schema = createSchema('CSORegisterUserSchema')
         add_csrf_token(self.context, self.request, schema)
         schema = schema.bind(context=self.context, request=self.request, api = self.api)
-        form = Form(schema, buttons=(button_register,button_cancel,))
+        form = Form(schema, buttons=(button_register, button_cancel,))
         self.api.register_form_resources(form)
         
         if 'cancel' in self.request.POST:
@@ -120,7 +119,7 @@ class CloudSignOnView(BaseEdit):
         schema = createSchema('CSORegisterUserSchema')
         add_csrf_token(self.context, self.request, schema)
         schema = schema.bind(context=self.context, request=self.request, api = self.api)
-        form = Form(schema, buttons=(button_register,button_cancel,))
+        form = Form(schema, buttons=(button_register, button_cancel,))
         self.api.register_form_resources(form)
         
         if 'cancel' in self.request.POST:
@@ -208,7 +207,7 @@ class CloudSignOnView(BaseEdit):
         schema = createSchema('CSORegisterUserOpenIDSchema')
         add_csrf_token(self.context, self.request, schema)
         schema = schema.bind(context=self.context, request=self.request, api = self.api)
-        form = Form(schema, buttons=(button_register,button_cancel,))
+        form = Form(schema, buttons=(button_register, button_cancel,))
         self.api.register_form_resources(form)
 
         if 'cancel' in self.request.POST:
@@ -275,7 +274,7 @@ class CloudSignOnView(BaseEdit):
 
 
 @view_config(context=ISiteRoot, name='facebook_login', permission=NO_PERMISSION_REQUIRED)
-def facebook_login(self, request):
+def facebook_login(context, request):
     if request.POST:
         request.session['came_from'] = request.POST.get('came_from', '') 
         provider = request.registry.velruse_providers['facebook']
@@ -283,7 +282,7 @@ def facebook_login(self, request):
     return HTTPBadRequest()
     
 @view_config(context=ISiteRoot, name='twitter_login', permission=NO_PERMISSION_REQUIRED)
-def twitter_login(self, request):
+def twitter_login(context, request):
     if request.POST:
         request.session['came_from'] = request.POST.get('came_from', '')
         provider = request.registry.velruse_providers['twitter']
@@ -291,12 +290,19 @@ def twitter_login(self, request):
     return HTTPBadRequest()
 
 @view_config(context=ISiteRoot, name='openid_login', permission=NO_PERMISSION_REQUIRED)
-def openid_login(self, request):
+def openid_login(context, request):
     if request.POST:
         request.session['came_from'] = request.POST.get('came_from', '')
         provider = request.registry.velruse_providers['openid']
-        return provider.login(request)
-    return HTTPBadRequest()
+        try:
+            return provider.login(request)
+        except Exception, e:
+            fm = request.registry.getAdapter(request, IFlashMessages)
+            msg = _(u"login_provider_exception_error",
+                    default = u"Error when loggin in with 3rd party provider: '${error}'",
+                    mapping = {'error': unicode(e)})
+            fm.add(msg, type = "error")
+    return HTTPFound(location = request.application_url)
 
 @view_config(context=facebook.FacebookAuthenticationComplete, renderer="templates/form_redirect.pt", permission=NO_PERMISSION_REQUIRED)
 def facebook_login_complete(context, request):
@@ -388,7 +394,7 @@ def openid_login_complete(context, request):
     openid_identifier = context.profile['accounts'][0]['username']
     force_domain = request.registry.settings.get('openid_domain', None)
     if force_domain and domain != force_domain:
-        fm = FlashMessages(request)
+        fm = request.registry.getAdapter(request, IFlashMessages)
         msg = _(u"openid_domain_not_allowed_error",
                 default = u"OpenID logins only allowed from this domain: ${force_domain} - domain was: ${domain}",
                 mapping = {'force_domain': force_domain, 'domain': domain})
