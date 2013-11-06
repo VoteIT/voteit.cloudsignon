@@ -38,11 +38,12 @@ def add_openid(config, *args, **kw):
         requires realm to be used.
     """
     from velruse.providers.openid import add_openid_login
+    from openid.store.memstore import MemoryStore
     realm = kw.pop('realm')
     if 'domain' in kw:
         domain = kw.pop('domain')
         config.registry.settings['openid_domain'] = domain
-    add_openid_login(config, realm = realm, **kw)
+    add_openid_login(config, realm = realm, storage =  MemoryStore(), **kw)
 
 def configure_providers(config):
     import ConfigParser
