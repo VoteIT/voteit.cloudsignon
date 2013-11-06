@@ -410,5 +410,11 @@ def openid_login_complete(context, request):
 
 @view_config(context=AuthenticationDenied, permission=NO_PERMISSION_REQUIRED)
 def cloud_login_denied(context, request):
-    del request.session['came_from']
-    raise Forbidden(_("Unable to Authenticate"))
+    if 'came_from' in request.session:
+        del request.session['came_from']
+    fm = request.registry.getAdapter(request, IFlashMessages)
+    msg = _(u"authentication_error_msg",
+            default = u"Error in authentication from upstream server: ${reason} - Provider name: '${provider_name}' Provider type: '${provider_type}'",
+            mapping = {'reason': context.reason, 'provider_name': context.provider_name, 'provider_type': context.provider_type})
+    fm.add(msg, type = 'error')
+    raise HTTPFound(location = request.application_url)
